@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "./firebase";
 
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
@@ -7,27 +9,77 @@ import DonorReg from "./pages/DonorReg";
 import BloodRequest from "./pages/BloodRequest";
 import Loginpage from "./pages/Loginpage";
 import AuthPage from "./pages/AuthPage";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
-  const [donors, setDonors] = useState([
-    // Mock donors for testing
-    { id: 1, name: "Rahul K", blood: "O+", phone: "9876543210", location: "Hyderabad" },
-    { id: 2, name: "Priya S", blood: "A+", phone: "9123456789", location: "Secunderabad" },
-    { id: 3, name: "Amit R", blood: "B-", phone: "9988776655", location: "Banjara Hills" }
-  ]);
+  const [donors, setDonors] = useState([]);
+  const [requests, setRequests] = useState([]);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Listen for Firebase auth state changes
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        const userData = {
+          uid: firebaseUser.uid,
+          name: firebaseUser.displayName || "User",
+          email: firebaseUser.email,
+          phone: firebaseUser.phoneNumber,
+          photoURL: firebaseUser.photoURL
+        };
+        setUser(userData);
+        localStorage.setItem("bloodhub_user", JSON.stringify(userData));
+      } else {
+        setUser(null);
+        localStorage.removeItem("bloodhub_user");
+      }
+      setLoading(false);
+    });
+
+    const loadData = async () => {
+      try {
+        const [donorRes, requestRes] = await Promise.all([
+          fetch("/api/donors"),
+          fetch("/api/requests"),
+        ]);
+
+        const donorsData = donorRes.ok ? await donorRes.json() : [];
+        const requestsData = requestRes.ok ? await requestRes.json() : [];
+
+        setDonors(Array.isArray(donorsData) ? donorsData : []);
+        setRequests(Array.isArray(requestsData) ? requestsData : []);
+      } catch (error) {
+        console.error("Unable to load data:", error);
+      }
+    };
+
+    loadData();
+
+    return () => unsubscribe();
+  }, []);
 
   return (
     <Router>
-      <Navbar />
-      
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Loginpage />} />
-        <Route path="/donate" element={<DonorReg donors={donors} setDonors={setDonors} />} />
-        <Route path="/request" element={<BloodRequest donors={donors} />} />
-        <Route path="/auth" element={<AuthPage />} />
-        
-      </Routes>
+      <Navbar user={user} />
+      <div style={{ paddingTop: "90px" }}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Loginpage setUser={setUser} />} />
+          <Route path="/donate" element={<DonorReg setDonors={setDonors} />} />
+          <Route
+            path="/request"
+            element={
+              <BloodRequest donors={donors} requests={requests} setRequests={setRequests} />
+            }
+          />
+          <Route path="/auth" element={<AuthPage setUser={setUser} />} />
+          <Route
+            path="/dashboard"
+            element={<Dashboard donors={donors} requests={requests} user={user} loading={loading} />}
+          />
+        </Routes>
+      </div>
     </Router>
   );
 }

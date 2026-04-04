@@ -1,9 +1,19 @@
 import { Link, useLocation } from "react-router-dom";
+import { signOut } from "firebase/auth";
+import { auth } from "../firebase";
 
-function Navbar() {
+function Navbar({ user }) {
   const location = useLocation();
 
   const isActive = (path) => location.pathname === path;
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  };
 
   return (
     <nav style={navStyle}>
@@ -32,14 +42,27 @@ function Navbar() {
           <Link to="/request" style={isActive("/request") ? activeLink : link}>
             Request
           </Link>
+
+          <Link to="/dashboard" style={isActive("/dashboard") ? activeLink : link}>
+            Dashboard
+          </Link>
         </div>
       </div>
 
-      {/* RIGHT - LOGIN */}
+      {/* RIGHT - USER INFO OR LOGIN */}
       <div style={right}>
-        <Link to="/login" style={login}>
-          Login / Signup
-        </Link>
+        {user ? (
+          <div style={userInfo}>
+            <span style={userName}>Hi, {user.name || user.email?.split('@')[0] || 'User'}</span>
+            <button onClick={handleLogout} style={logoutBtn}>
+              Logout
+            </button>
+          </div>
+        ) : (
+          <Link to="/login" style={login}>
+            Login / Signup
+          </Link>
+        )}
       </div>
 
     </nav>
@@ -112,6 +135,29 @@ const activeLink = {
 const login = {
   color: "#fff",
   textDecoration: "none",
+  fontWeight: "500"
+};
+
+const userInfo = {
+  display: "flex",
+  alignItems: "center",
+  gap: "10px"
+};
+
+const userName = {
+  color: "#fff",
+  fontSize: "14px",
+  fontWeight: "500"
+};
+
+const logoutBtn = {
+  background: "#e53935",
+  color: "#fff",
+  border: "none",
+  padding: "5px 12px",
+  borderRadius: "15px",
+  cursor: "pointer",
+  fontSize: "12px",
   fontWeight: "500"
 };
 

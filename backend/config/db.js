@@ -1,12 +1,12 @@
-const mongoose = require("mongoose");
+﻿const mongoose = require("mongoose");
 
 const connectDB = async () => {
   try {
-    await mongoose.connect("mongodb://127.0.0.1:27017/bloodhub");
-
+    const mongoUri = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/bloodhub";
+    await mongoose.connect(mongoUri);
     console.log("MongoDB Connected");
   } catch (error) {
-    console.error("Database connection failed");
+    console.error("Database connection failed", error.message);
     process.exit(1);
   }
 };
