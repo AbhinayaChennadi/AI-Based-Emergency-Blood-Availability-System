@@ -20,10 +20,15 @@ box-shadow:0 10px 25px rgba(0,0,0,0.12);
 
 .stat-card h2{
 font-size:28px;
+color:#d32f2f;
+font-weight:700;
+margin:0 0 8px 0;
 }
 
 .stat-card p{
-color:gray;
+color:#333;
+font-weight:500;
+margin:0;
 }
 
 .warning-section {
