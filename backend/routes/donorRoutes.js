@@ -1,5 +1,6 @@
 ﻿const express = require("express");
 const router = express.Router();
+const authMiddleware = require("../middleware/authMiddleware");
 const {
   createDonor,
   getDonors,
@@ -9,13 +10,13 @@ const {
   matchDonors,
 } = require("../controllers/donorController");
 
-router.post("/", createDonor);
+router.post("/", authMiddleware, createDonor);
 router.get("/search/match", matchDonors);
 router.get("/search", matchDonors);
 router.get("/match", matchDonors);
 router.get("/", getDonors);
 router.get("/:id", getDonorById);
-router.put("/:id", updateDonor);
-router.delete("/:id", deleteDonor);
+router.put("/:id", authMiddleware, updateDonor);
+router.delete("/:id", authMiddleware, deleteDonor);
 
 module.exports = router;

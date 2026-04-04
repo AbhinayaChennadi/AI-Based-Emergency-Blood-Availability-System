@@ -1,4 +1,13 @@
-﻿const User = require("../models/User");
+﻿const jwt = require("jsonwebtoken");
+const User = require("../models/User");
+
+const generateToken = (user) => {
+  return jwt.sign(
+    { userId: user._id, phone: user.phone, role: user.role },
+    process.env.JWT_SECRET || "your_secret_key",
+    { expiresIn: "7d" }
+  );
+};
 
 exports.register = async (req, res) => {
   try {
@@ -13,7 +22,12 @@ exports.register = async (req, res) => {
       await user.save();
     }
 
-    return res.status(200).json(user);
+    const token = generateToken(user);
+    return res.status(200).json({ 
+      message: "Registration successful.",
+      token, 
+      user 
+    });
   } catch (error) {
     return res.status(500).json({ message: "Registration failed.", error: error.message });
   }
@@ -31,7 +45,12 @@ exports.login = async (req, res) => {
       return res.status(404).json({ message: "User not found." });
     }
 
-    return res.status(200).json(user);
+    const token = generateToken(user);
+    return res.status(200).json({ 
+      message: "Login successful.",
+      token, 
+      user 
+    });
   } catch (error) {
     return res.status(500).json({ message: "Login failed.", error: error.message });
   }
@@ -54,8 +73,10 @@ exports.verifyOtp = async (req, res) => {
       await user.save();
     }
 
+    const token = generateToken(user);
     return res.status(200).json({
       message: "OTP verified successfully.",
+      token,
       user,
     });
   } catch (error) {

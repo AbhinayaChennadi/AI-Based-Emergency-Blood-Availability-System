@@ -4,6 +4,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase";
 
 import Navbar from "./components/Navbar";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./pages/Home";
 import DonorReg from "./pages/DonorReg";
 import BloodRequest from "./pages/BloodRequest";
@@ -66,17 +67,40 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Loginpage setUser={setUser} />} />
-          <Route path="/donate" element={<DonorReg setDonors={setDonors} />} />
+          <Route 
+            path="/donate" 
+            element={
+              <ProtectedRoute 
+                element={<DonorReg setDonors={setDonors} />}
+                isAuthenticated={!!user}
+                loading={loading}
+              />
+            } 
+          />
           <Route
             path="/request"
             element={
-              <BloodRequest donors={donors} requests={requests} setRequests={setRequests} />
+              <ProtectedRoute 
+                element={
+                  <BloodRequest donors={donors} requests={requests} setRequests={setRequests} />
+                }
+                isAuthenticated={!!user}
+                loading={loading}
+              />
             }
           />
           <Route path="/auth" element={<AuthPage setUser={setUser} />} />
           <Route
             path="/dashboard"
-            element={<Dashboard donors={donors} requests={requests} user={user} loading={loading} />}
+            element={
+              <ProtectedRoute 
+                element={
+                  <Dashboard donors={donors} requests={requests} user={user} loading={loading} />
+                }
+                isAuthenticated={!!user}
+                loading={loading}
+              />
+            }
           />
         </Routes>
       </div>
