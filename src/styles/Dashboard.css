@@ -45,7 +45,7 @@
 
 .header-left p {
   font-size: 1.1rem;
-  color: #666;
+  color: #555;
   margin: 0;
 }
 
@@ -136,7 +136,7 @@
 
 .stat-content p {
   font-size: 1rem;
-  color: #666;
+  color: #555;
   margin: 0 0 8px 0;
 }
 
@@ -185,7 +185,7 @@
   background: transparent;
   border: none;
   border-radius: 12px;
-  color: #666;
+  color: #555;
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
@@ -289,7 +289,7 @@
 
 .activity-time {
   font-size: 0.875rem;
-  color: #666;
+  color: #555;
 }
 
 .activity-status {
@@ -390,7 +390,7 @@
 .search-bar svg {
   position: absolute;
   left: 14px;
-  color: #666;
+  color: #555;
 }
 
 .search-bar input {
@@ -464,7 +464,7 @@
 .donor-info h3 {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #1a1a1a;
+  color: #333;
   margin: 0 0 4px 0;
 }
 
@@ -477,7 +477,14 @@
   font-weight: 600;
 }
 
-.donor-details {
+.donor-info h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 4px 0;
+} 
+
+  .donor-details {
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -488,7 +495,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #666;
+  color: #555;
   font-size: 0.875rem;
 }
 
@@ -588,7 +595,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #666;
+  color: #555;
   font-size: 0.875rem;
 }
 

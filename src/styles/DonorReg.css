@@ -64,7 +64,7 @@
 .brand-subtitle {
   font-size: 1.2rem;
   line-height: 1.6;
-  opacity: 0.9;
+  opacity: 0.98;
   max-width: 500px;
 }
 
@@ -106,7 +106,7 @@
 
 .benefit-card p {
   font-size: 0.95rem;
-  opacity: 0.9;
+  opacity: 0.98;
   color: white;
   margin: 0;
 }
@@ -133,7 +133,7 @@
 
 .stat-label {
   font-size: 0.9rem;
-  opacity: 0.8;
+  opacity: 0.95;
   color: white;
   font-weight: 500;
 }
@@ -182,7 +182,7 @@
   height: 40px;
   border-radius: 50%;
   background: #e9ecef;
-  color: #666;
+  color: #555;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -199,7 +199,7 @@
 
 .step-label {
   font-size: 0.8rem;
-  color: #666;
+  color: #555;
   font-weight: 500;
 }
 
@@ -257,7 +257,7 @@
   left: 16px;
   top: 50%;
   transform: translateY(-50%);
-  color: #999;
+  color: #444;
   z-index: 2;
 }
 
@@ -422,7 +422,7 @@
 .form-terms {
   text-align: center;
   font-size: 0.85rem;
-  color: #666;
+  color: #555;
   margin-top: 24px;
   line-height: 1.5;
 }

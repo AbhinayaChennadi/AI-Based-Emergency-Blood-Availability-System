@@ -147,7 +147,7 @@
 .input-icon {
   position: absolute;
   left: 1rem;
-  color: #a0aec0;
+  color: #666;
   z-index: 1;
 }
 
@@ -422,7 +422,7 @@
   display: flex;
   align-items: center;
   gap: 0.25rem;
-  color: #a0aec0;
+  color: #666;
   font-size: 0.9rem;
 }
 
@@ -462,12 +462,12 @@
 .empty-state {
   text-align: center;
   padding: 3rem 1rem;
-  color: #a0aec0;
+  color: #888;
 }
 
 .empty-icon {
   margin-bottom: 1rem;
-  opacity: 0.5;
+  opacity: 0.7;
 }
 
 .empty-state h3 {

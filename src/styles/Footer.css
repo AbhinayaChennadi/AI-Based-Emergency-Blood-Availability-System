@@ -57,7 +57,7 @@
 }
 
 .footer-description {
-  color: #cccccc;
+  color: #aaaaaa;
   line-height: 1.6;
   margin-bottom: 30px;
   font-size: 16px;
@@ -120,7 +120,7 @@
 .footer-link-button {
   background: none;
   border: none;
-  color: #cccccc;
+  color: #aaaaaa;
   font-size: 16px;
   cursor: pointer;
   display: flex;
@@ -146,7 +146,7 @@
   align-items: center;
   gap: 12px;
   margin-bottom: 16px;
-  color: #cccccc;
+  color: #aaaaaa;
   font-size: 16px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -294,7 +294,7 @@
 }
 
 .footer-bottom p {
-  color: #999999;
+  color: #888;
   font-size: 14px;
   margin: 0;
 }
@@ -307,7 +307,7 @@
 .footer-bottom-links button {
   background: none;
   border: none;
-  color: #999999;
+  color: #888;
   font-size: 14px;
   cursor: pointer;
   transition: color 0.3s ease;
