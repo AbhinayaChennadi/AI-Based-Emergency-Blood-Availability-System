@@ -1,0 +1,23 @@
+.stats-container{
+display:flex;
+justify-content:center;
+gap:30px;
+margin-top:-70px;
+}
+
+.stat-card{
+background:white;
+padding:25px;
+border-radius:12px;
+text-align:center;
+width:200px;
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+.stat-card h2{
+font-size:28px;
+}
+
+.stat-card p{
+color:gray;
+}

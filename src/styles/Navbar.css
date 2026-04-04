@@ -1,0 +1,52 @@
+/* NAVBAR */
+
+.navbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  padding:12px 40px;   /* reduced spacing */
+  background:white;
+}
+
+/* LOGO */
+
+.logo{
+  font-size:32px;      /* bigger logo */
+  font-weight:bold;
+  color:#1976d2;
+}
+
+/* NAV LINKS */
+
+.nav-links{
+  display:flex;
+  gap:25px;            /* balanced spacing */
+  list-style:none;
+}
+
+.nav-links a{
+  text-decoration:none;
+  font-size:20px;      /* bigger text */
+  font-weight:600;
+  color:#333;
+}
+
+.nav-links a:hover{
+  color:#1976d2;
+}
+
+/* BUTTON */
+
+.nav-btn{
+  padding:12px 28px;   /* bigger button */
+  font-size:18px;
+
+  border:none;
+  border-radius:8px;
+
+  background:#1976d2;
+  color:white;
+
+  cursor:pointer;
+}

@@ -1,0 +1,15 @@
+.info-section{
+text-align:center;
+margin:60px 0;
+}
+
+.info-section h1{
+font-size:36px;
+font-weight:bold;
+}
+
+.info-section p{
+margin-top:10px;
+color:gray;
+font-size:18px;
+}
