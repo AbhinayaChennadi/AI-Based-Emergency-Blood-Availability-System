@@ -1,46 +1,19 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import {
-  getAuth,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  sendEmailVerification,
-  signInWithPopup
-} from "firebase/auth";
-import { GoogleAuthProvider } from "firebase/auth";
+import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
-// Your web app's Firebase configuration
+// Your Firebase config
 const firebaseConfig = {
-  apiKey: "AIzaSyAOUuJUbbjmEXGLE9NsE3ccBZItYpQzqtI",
-  authDomain: "bloodhub-b9213.firebaseapp.com",
-  projectId: "bloodhub-b9213",
-  storageBucket: "bloodhub-b9213.firebasestorage.app",
-  messagingSenderId: "284755581017",
-  appId: "1:284755581017:web:038de59781148cb125b948",
-  measurementId: "G-KCQXNY5VPT"
+  apiKey: "AIzaSyBzkLDOUHxG4qbSxzoNxZk7q8B05oOQx2A",
+  authDomain: "bloodhub-33c0f.firebaseapp.com",
+  projectId: "bloodhub-33c0f",
+  storageBucket: "bloodhub-33c0f.appspot.com", // ✅ FIXED
+  messagingSenderId: "280102848880",
+  appId: "1:280102848880:web:0b4393732ffc9f236d27b5"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-// Analytics can fail in some environments (localhost/incognito/blocked cookies).
-// Auth should still work, so we guard it.
-try {
-  if (typeof window !== "undefined") {
-    getAnalytics(app);
-  }
-} catch (err) {
-  console.warn("Firebase analytics unavailable:", err?.message || err);
-}
-const auth = getAuth(app);
 
-const googleProvider = new GoogleAuthProvider();
-
-export {
-  auth,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  sendEmailVerification,
-  signInWithPopup,
-  googleProvider
-};
+// Auth setup
+export const auth = getAuth(app);
+export const googleProvider = new GoogleAuthProvider();
