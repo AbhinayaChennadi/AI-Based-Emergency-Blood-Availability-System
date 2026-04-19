@@ -10,12 +10,113 @@ import {
   getRedirectResult,
   sendEmailVerification
 } from "firebase/auth";
-import { updateProfile } from "firebase/auth";
-import { Heart } from "lucide-react";
-import "../styles/Auth.css";
-import { apiUrl } from "../config/api";
-import LoginForm from "../components/LoginForm";
-import SignupForm from "../components/SignupForm";
+
+const handleGoogleAuth = async () => {
+  setLoading(true);
+  setError("");
+
+  try {
+    await signInWithRedirect(auth, googleProvider);
+  } catch (error) {
+    console.error(error);
+    setError("Google authentication failed");
+  }
+};
+
+useEffect(() => {
+  getRedirectResult(auth)
+    .then((result) => {
+      if (result) {
+        const user = result.user;
+
+        setUser({
+          uid: user.uid,
+          name: user.displayName,
+          email: user.email,
+          phone: user.phoneNumber,
+          photoURL: user.photoURL
+        });
+
+        localStorage.setItem("bloodhub_user", JSON.stringify(user));
+      }
+    })
+    .catch((error) => {
+      console.error("Redirect error:", error);
+    });
+}, []);
+
+const handleEmailSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  setError("");
+  setSuccess("");
+
+  const cleanEmail = String(email || "").trim().toLowerCase();
+  const cleanPassword = String(password || "");
+  const cleanName = String(name || "").trim();
+
+  if (!cleanEmail || !cleanPassword) {
+    setError("Email and password are required.");
+    setLoading(false);
+    return;
+  }
+
+  if (activeTab === "signup") {
+    if (!cleanName) {
+      setError("Name is required.");
+      setLoading(false);
+      return;
+    }
+    if (cleanPassword.length < 6) {
+      setError("Password should be at least 6 characters.");
+      setLoading(false);
+      return;
+    }
+    if (cleanPassword !== confirmPassword) {
+      setError("Passwords do not match.");
+      setLoading(false);
+      return;
+    }
+  }
+
+  try {
+    let user;
+    if (activeTab === "signup") {
+      const result = await createUserWithEmailAndPassword(auth, cleanEmail, cleanPassword);
+      user = result.user;
+      
+      try {
+        await updateProfile(user, { displayName: cleanName });
+      } catch(e) {}
+      try {
+        await sendEmailVerification(user);
+      } catch (_) {}
+    } else {
+      const result = await signInWithEmailAndPassword(auth, cleanEmail, cleanPassword);
+      user = result.user;
+    }
+
+    setUser({
+      uid: user.uid,
+      name: getPreferredName(user),
+      email: user.email,
+      phone: user.phoneNumber,
+      photoURL: user.photoURL
+    });
+    localStorage.setItem("bloodhub_user", JSON.stringify({
+      uid: user.uid,
+      name: getPreferredName(user),
+      email: user.email,
+      phone: user.phoneNumber,
+      photoURL: user.photoURL
+    }));
+    navigate("/welcome");
+  } catch (err) {
+    setError("Authentication Failed. Invalid combinations.");
+  } finally {
+    setLoading(false);
+  }
+};
 
 function AuthPage({ setUser, initialMode = "login" }) {
   const [activeTab, setActiveTab] = useState("login");
@@ -59,19 +160,18 @@ function AuthPage({ setUser, initialMode = "login" }) {
   useEffect(() => {
     getRedirectResult(auth)
       .then((result) => {
-        if (result && result.user) {
+        if (result) {
           const user = result.user;
 
-          const userData = {
+          setUser({
             uid: user.uid,
             name: user.displayName,
             email: user.email,
             phone: user.phoneNumber,
             photoURL: user.photoURL
-          };
+          });
 
-          setUser(userData);
-          localStorage.setItem("bloodhub_user", JSON.stringify(userData));
+          localStorage.setItem("bloodhub_user", JSON.stringify(user));
         }
       })
       .catch((error) => {
@@ -80,12 +180,16 @@ function AuthPage({ setUser, initialMode = "login" }) {
       });
   }, []);
 
-  const handleGoogleAuth = () => {
+  const handleGoogleAuth = async () => {
     setLoading(true);
     setError("");
-    setSuccess("");
 
-    signInWithRedirect(auth, googleProvider);
+    try {
+      await signInWithRedirect(auth, googleProvider);
+    } catch (error) {
+      console.error(error);
+      setError("Google authentication failed");
+    }
   };
 
   const handleEmailSubmit = async (e) => {
