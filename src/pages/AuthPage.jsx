@@ -59,44 +59,33 @@ function AuthPage({ setUser, initialMode = "login" }) {
   useEffect(() => {
     getRedirectResult(auth)
       .then((result) => {
-        if (result) {
-          console.log("User:", result.user);
+        if (result && result.user) {
+          const user = result.user;
+
+          const userData = {
+            uid: user.uid,
+            name: user.displayName,
+            email: user.email,
+            phone: user.phoneNumber,
+            photoURL: user.photoURL
+          };
+
+          setUser(userData);
+          localStorage.setItem("bloodhub_user", JSON.stringify(userData));
         }
       })
       .catch((error) => {
         console.error("Redirect error:", error);
+        setError("Google authentication failed");
       });
   }, []);
 
-  const handleGoogleAuth = async () => {
+  const handleGoogleAuth = () => {
     setLoading(true);
     setError("");
     setSuccess("");
-    try {
-      const result = await signInWithRedirect(auth, googleProvider);
-      const user = result.user;
-      
-      setUser({
-        uid: user.uid,
-        name: getPreferredName(user),
-        email: user.email,
-        phone: user.phoneNumber,
-        photoURL: user.photoURL
-      });
-      localStorage.setItem("bloodhub_user", JSON.stringify({
-        uid: user.uid,
-        name: getPreferredName(user),
-        email: user.email,
-        phone: user.phoneNumber,
-        photoURL: user.photoURL
-      }));
-      navigate("/welcome");
-    } catch (err) {
-      console.error("Google auth error:", err);
-      setError("Google authentication failed.");
-    } finally {
-      setLoading(false);
-    }
+
+    signInWithRedirect(auth, googleProvider);
   };
 
   const handleEmailSubmit = async (e) => {
