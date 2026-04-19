@@ -3,7 +3,7 @@ const User = require("../models/User");
 
 const generateToken = (user) => {
   return jwt.sign(
-    { userId: user._id, phone: user.phone, role: user.role },
+    { userId: user._id, role: user.role },
     process.env.JWT_SECRET || "your_secret_key",
     { expiresIn: "7d" }
   );
@@ -11,14 +11,10 @@ const generateToken = (user) => {
 
 exports.register = async (req, res) => {
   try {
-    const { name, email, phone } = req.body;
-    if (!phone) {
-      return res.status(400).json({ message: "Phone number is required." });
-    }
-
-    let user = await User.findOne({ phone });
+    const { name, email } = req.body;
+    let user = await User.findOne({ email });
     if (!user) {
-      user = new User({ name, email, phone });
+      user = new User({ name, email });
       await user.save();
     }
 
@@ -35,12 +31,12 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
   try {
-    const { phone } = req.body;
-    if (!phone) {
-      return res.status(400).json({ message: "Phone number is required." });
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ message: "Email is required." });
     }
 
-    const user = await User.findOne({ phone });
+    const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).json({ message: "User not found." });
     }

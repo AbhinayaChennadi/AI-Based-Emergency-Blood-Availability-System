@@ -1,22 +1,24 @@
-﻿const express = require("express");
-const router = express.Router();
-const authMiddleware = require("../middleware/authMiddleware");
-const {
+import express from "express";
+import {
   createDonor,
   getDonors,
   getDonorById,
   updateDonor,
   deleteDonor,
   matchDonors,
-} = require("../controllers/donorController");
+} from "../controllers/donorController.js";
 
-router.post("/", authMiddleware, createDonor);
-router.get("/search/match", matchDonors);
+const router = express.Router();
+
+// Primary registration route (as requested)
+router.post("/register", createDonor);
+
+// Legacy/Alternative routes
+router.post("/", createDonor);
 router.get("/search", matchDonors);
-router.get("/match", matchDonors);
 router.get("/", getDonors);
 router.get("/:id", getDonorById);
-router.put("/:id", authMiddleware, updateDonor);
-router.delete("/:id", authMiddleware, deleteDonor);
+router.put("/:id", updateDonor);
+router.delete("/:id", deleteDonor);
 
-module.exports = router;
+export default router;

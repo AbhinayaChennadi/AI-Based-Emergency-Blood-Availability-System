@@ -9,5 +9,6 @@ const {
 router.post("/register", register);
 router.post("/login", login);
 router.post("/verify", verifyOtp);
+router.post("/google-login", googleLogin);
 
 module.exports = router;

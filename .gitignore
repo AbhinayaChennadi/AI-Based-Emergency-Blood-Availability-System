@@ -22,3 +22,14 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Flask backend (generated / local)
+flask_backend/__pycache__/
+flask_backend/**/__pycache__/
+flask_backend/.venv/
+flask_backend/venv/
+flask_backend/ml_model/priority_model.pkl
+flask_backend/data/*.json
+backend/node_modules/
+legacy_backup/
+dist/

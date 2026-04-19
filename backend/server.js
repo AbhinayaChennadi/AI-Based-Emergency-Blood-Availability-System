@@ -1,32 +1,72 @@
-﻿require("dotenv").config({ path: __dirname + '/.env' });
-const express = require("express");
-const cors = require("cors");
-const connectDB = require("./config/db");
+import express from "express";
+import cors from "cors";
 
-console.log("Loading .env from:", __dirname + '/.env');
-console.log("JWT_SECRET is set:", !!process.env.JWT_SECRET);
+// Checklist Verification Hook
+import dotenv from "dotenv";
+import connectDB from "./config/db.js";
+import testRoutes from "./routes/testRoutes.js";
+import matchRoutes from "./routes/matchRoutes.js";
+import donorRoutes from "./routes/donorRoutes.js";
+import requestRoutes from "./routes/requestRoutes.js";
 
-const authRoutes = require("./routes/authRoutes");
-const donorRoutes = require("./routes/donorRoutes");
-const requestRoutes = require("./routes/requestRoutes");
+dotenv.config();
+
+console.log("Database & Auth Loading...");
 
 const app = express();
-
-connectDB();
-
 app.use(cors());
 app.use(express.json());
 
-app.use("/api/auth", authRoutes);
+// Global Request Logger Middleware
+app.use((req, res, next) => {
+  console.log(`[API REQUEST] ${req.method} ${req.originalUrl}`);
+  next();
+});
+
+// Base Domain Root - to prevent "Cannot GET /"
+app.get("/", (req, res) => {
+  res.send("BloodHub Backend Running Successfully!");
+});
+
+// Test Endpoint
+app.get("/api/test", (req, res) => {
+  res.json({ message: "API working" });
+});
+
 app.use("/api/donors", donorRoutes);
 app.use("/api/requests", requestRoutes);
+app.use("/api", matchRoutes);
+app.use("/api", testRoutes);
 
-app.get("/", (req, res) => {
-  res.send("BloodHub Backend Running");
+// ==========================================
+// 3. ML MOCK ROUTES
+// ==========================================
+
+// Used by DonorReg.jsx
+app.post("/api/predict-donor-response", (req, res) => {
+  // Mock standard JSON response
+  res.json({ willRespond: true, probability: 0.85 });
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log("Authentication middleware enabled for protected routes");
+// Used by BloodRequest.jsx
+app.post("/api/predict-priority", (req, res) => {
+  res.json({ priority: "CRITICAL", confidence: 0.9 });
 });
+
+// ==========================================
+// SERVER BOOT
+// ==========================================
+
+const startServer = async () => {
+  try {
+    await connectDB();
+    app.listen(5000, () => {
+      console.log("Persistent MongoDB Server running precisely on http://localhost:5000");
+    });
+  } catch (error) {
+    console.error("Failed to start server due to MongoDB connection error:", error);
+    process.exit(1);
+  }
+};
+
+startServer();

@@ -1,40 +1,47 @@
-﻿const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const requestSchema = new mongoose.Schema({
   patientName: {
     type: String,
     required: true,
-    trim: true,
   },
   bloodGroup: {
     type: String,
     required: true,
-    trim: true,
   },
   phone: {
     type: String,
     required: true,
-    trim: true,
+  },
+  email: {
+    type: String,
+    required: true
   },
   location: {
+    city: { type: String, required: true },
+    state: { type: String, default: "" }
+  },
+  hospital: {
     type: String,
-    required: true,
-    trim: true,
   },
   urgency: {
     type: String,
-    enum: ["Normal", "Urgent", "Critical"],
-    default: "Normal",
+  },
+  predictedPriority: {
+    type: String,
+  },
+  unitsNeeded: {
+    type: Number,
+    default: 1,
   },
   status: {
     type: String,
-    enum: ["Pending", "Fulfilled", "Canceled"],
+    enum: ["Pending", "Accepted", "Rejected", "Completed"],
     default: "Pending",
   },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
+}, {
+  timestamps: true,
 });
 
-module.exports = mongoose.model("Request", requestSchema);
+const Request = mongoose.model("Request", requestSchema);
+export default Request;

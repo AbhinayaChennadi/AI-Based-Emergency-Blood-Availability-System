@@ -3,15 +3,12 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import {
   getAuth,
-  RecaptchaVerifier,
-  signInWithPhoneNumber,
-  signInWithPopup,
-  GoogleAuthProvider,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  signInWithCredential,
-  PhoneAuthProvider
+  sendEmailVerification,
+  signInWithPopup
 } from "firebase/auth";
+import { GoogleAuthProvider } from "firebase/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -26,19 +23,24 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+// Analytics can fail in some environments (localhost/incognito/blocked cookies).
+// Auth should still work, so we guard it.
+try {
+  if (typeof window !== "undefined") {
+    getAnalytics(app);
+  }
+} catch (err) {
+  console.warn("Firebase analytics unavailable:", err?.message || err);
+}
 const auth = getAuth(app);
+
 const googleProvider = new GoogleAuthProvider();
 
 export {
   auth,
-  RecaptchaVerifier,
-  signInWithPhoneNumber,
-  signInWithPopup,
-  GoogleAuthProvider,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  signInWithCredential,
-  PhoneAuthProvider,
+  sendEmailVerification,
+  signInWithPopup,
   googleProvider
 };

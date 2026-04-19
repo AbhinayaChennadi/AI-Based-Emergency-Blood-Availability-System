@@ -1,16 +1,20 @@
-﻿const express = require("express");
-const router = express.Router();
-const authMiddleware = require("../middleware/authMiddleware");
-const {
+import express from "express";
+import {
   createRequest,
   getRequests,
   updateRequest,
   deleteRequest,
-} = require("../controllers/requestController");
+} from "../controllers/requestController.js";
 
-router.post("/", authMiddleware, createRequest);
+const router = express.Router();
+
+// Primary creation route (as requested)
+router.post("/create", createRequest);
+
+// Legacy/Alternative routes
+router.post("/", createRequest);
 router.get("/", getRequests);
-router.put("/:id", authMiddleware, updateRequest);
-router.delete("/:id", authMiddleware, deleteRequest);
+router.put("/:id", updateRequest);
+router.delete("/:id", deleteRequest);
 
-module.exports = router;
+export default router;
