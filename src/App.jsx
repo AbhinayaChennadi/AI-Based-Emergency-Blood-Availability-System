@@ -48,8 +48,8 @@ function App() {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => {
       controller.abort();
-      console.warn(`[CONNECTIVITY] Load attempt ${retryCount + 1} timed out after 10s.`);
-    }, 10000); // 10s timeout for cold starts
+      console.warn(`[CONNECTIVITY] Load attempt ${retryCount + 1} timed out after 30s.`);
+    }, 30000); // 30s timeout for cold starts
 
     try {
       const fetchOptions = { 
