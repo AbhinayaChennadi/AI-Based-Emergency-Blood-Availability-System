@@ -5,7 +5,8 @@ import {
   auth,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   googleProvider,
   sendEmailVerification
 } from "../firebase";
@@ -55,12 +56,24 @@ function AuthPage({ setUser, initialMode = "login" }) {
     return () => clearTimeout(timer);
   }, [initialMode, location]);
 
+  useEffect(() => {
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result) {
+          console.log("User:", result.user);
+        }
+      })
+      .catch((error) => {
+        console.error("Redirect error:", error);
+      });
+  }, []);
+
   const handleGoogleAuth = async () => {
     setLoading(true);
     setError("");
     setSuccess("");
     try {
-      const result = await signInWithPopup(auth, googleProvider);
+      const result = await signInWithRedirect(auth, googleProvider);
       const user = result.user;
       
       setUser({
