@@ -33,3 +33,4 @@ flask_backend/data/*.json
 backend/node_modules/
 legacy_backup/
 dist/
+backend/serviceAccountKey.json
