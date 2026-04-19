@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { auth, googleProvider } from "../firebase";
+
 import {
-  auth,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signInWithRedirect,
   getRedirectResult,
-  googleProvider,
   sendEmailVerification
-} from "../firebase";
+} from "firebase/auth";
 import { updateProfile } from "firebase/auth";
 import { Heart } from "lucide-react";
 import "../styles/Auth.css";
