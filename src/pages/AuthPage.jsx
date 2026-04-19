@@ -1,26 +1,37 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { auth, googleProvider } from "../firebase";
-
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  signInWithRedirect,
-  getRedirectResult,
-  sendEmailVerification
+  signInWithPopup
 } from "firebase/auth";
+
+import { auth, googleProvider } from "../firebase";
 
 const handleGoogleAuth = async () => {
   setLoading(true);
   setError("");
 
   try {
-    await signInWithRedirect(auth, googleProvider);
+    const result = await signInWithPopup(auth, googleProvider);
+    const user = result.user;
+
+    setUser({
+      uid: user.uid,
+      name: user.displayName,
+      email: user.email,
+      phone: user.phoneNumber,
+      photoURL: user.photoURL
+    });
+
+    localStorage.setItem("bloodhub_user", JSON.stringify(user));
   } catch (error) {
     console.error(error);
     setError("Google authentication failed");
   }
+
+  setLoading(false);
 };
 
 useEffect(() => {
@@ -185,11 +196,24 @@ function AuthPage({ setUser, initialMode = "login" }) {
     setError("");
 
     try {
-      await signInWithRedirect(auth, googleProvider);
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+
+      setUser({
+        uid: user.uid,
+        name: user.displayName,
+        email: user.email,
+        phone: user.phoneNumber,
+        photoURL: user.photoURL
+      });
+
+      localStorage.setItem("bloodhub_user", JSON.stringify(user));
     } catch (error) {
       console.error(error);
       setError("Google authentication failed");
     }
+
+    setLoading(false);
   };
 
   const handleEmailSubmit = async (e) => {
