@@ -53,15 +53,13 @@ app.post("/api/predict-priority", (req, res) => {
   res.json({ priority: "CRITICAL", confidence: 0.9 });
 });
 
-// ==========================================
-// SERVER BOOT
-// ==========================================
+const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
   try {
     await connectDB();
-    app.listen(5000, () => {
-      console.log("Persistent MongoDB Server running precisely on http://localhost:5000");
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
     });
   } catch (error) {
     console.error("Failed to start server due to MongoDB connection error:", error);
