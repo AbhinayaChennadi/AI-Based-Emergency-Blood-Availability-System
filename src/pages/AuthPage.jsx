@@ -4,51 +4,37 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  signInWithPopup
+  signInWithRedirect,
+  getRedirectResult,
+  sendEmailVerification
 } from "firebase/auth";
 
 import { auth, googleProvider } from "../firebase";
 
 const handleGoogleAuth = async () => {
-  setLoading(true);
-  setError("");
-
   try {
-    const result = await signInWithPopup(auth, googleProvider);
-    const user = result.user;
-
-    setUser({
-      uid: user.uid,
-      name: user.displayName,
-      email: user.email,
-      phone: user.phoneNumber,
-      photoURL: user.photoURL
-    });
-
-    localStorage.setItem("bloodhub_user", JSON.stringify(user));
+    await signInWithRedirect(auth, googleProvider);
   } catch (error) {
     console.error(error);
     setError("Google authentication failed");
   }
-
-  setLoading(false);
 };
 
 useEffect(() => {
   getRedirectResult(auth)
     .then((result) => {
-      if (result) {
+      if (result?.user) {
         const user = result.user;
 
-        setUser({
+        const userData = {
           uid: user.uid,
           name: user.displayName,
           email: user.email,
-          phone: user.phoneNumber,
           photoURL: user.photoURL
-        });
+        };
 
-        localStorage.setItem("bloodhub_user", JSON.stringify(user));
+        localStorage.setItem("bloodhub_user", JSON.stringify(userData));
+        setUser(userData);
       }
     })
     .catch((error) => {
@@ -171,18 +157,18 @@ function AuthPage({ setUser, initialMode = "login" }) {
   useEffect(() => {
     getRedirectResult(auth)
       .then((result) => {
-        if (result) {
+        if (result?.user) {
           const user = result.user;
 
-          setUser({
+          const userData = {
             uid: user.uid,
             name: user.displayName,
             email: user.email,
-            phone: user.phoneNumber,
             photoURL: user.photoURL
-          });
+          };
 
-          localStorage.setItem("bloodhub_user", JSON.stringify(user));
+          localStorage.setItem("bloodhub_user", JSON.stringify(userData));
+          setUser(userData);
         }
       })
       .catch((error) => {
@@ -192,28 +178,12 @@ function AuthPage({ setUser, initialMode = "login" }) {
   }, []);
 
   const handleGoogleAuth = async () => {
-    setLoading(true);
-    setError("");
-
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const user = result.user;
-
-      setUser({
-        uid: user.uid,
-        name: user.displayName,
-        email: user.email,
-        phone: user.phoneNumber,
-        photoURL: user.photoURL
-      });
-
-      localStorage.setItem("bloodhub_user", JSON.stringify(user));
+      await signInWithRedirect(auth, googleProvider);
     } catch (error) {
       console.error(error);
       setError("Google authentication failed");
     }
-
-    setLoading(false);
   };
 
   const handleEmailSubmit = async (e) => {
