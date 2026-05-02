@@ -26,7 +26,7 @@
     "build": "vite build",
     "test": "echo \"No test runner configured\"",
     "preview": "vite preview",
-    "server": "node server.js"
+    "server": "npm start --prefix backend"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^6.0.1",

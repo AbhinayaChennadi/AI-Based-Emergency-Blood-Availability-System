@@ -1,121 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  signInWithRedirect,
-  getRedirectResult,
-  sendEmailVerification
+  signInWithPopup,
+  sendEmailVerification,
+  updateProfile
 } from "firebase/auth";
+import { Heart } from "lucide-react";
 
 import { auth, googleProvider } from "../firebase";
+import LoginForm from "../components/LoginForm";
+import SignupForm from "../components/SignupForm";
+import "../styles/Auth.css";
 
-const handleGoogleAuth = async () => {
-  try {
-    await signInWithRedirect(auth, googleProvider);
-  } catch (error) {
-    console.error(error);
-    setError("Google authentication failed");
-  }
-};
 
-useEffect(() => {
-  getRedirectResult(auth)
-    .then((result) => {
-      if (result?.user) {
-        const user = result.user;
-
-        const userData = {
-          uid: user.uid,
-          name: user.displayName,
-          email: user.email,
-          photoURL: user.photoURL
-        };
-
-        localStorage.setItem("bloodhub_user", JSON.stringify(userData));
-        setUser(userData);
-      }
-    })
-    .catch((error) => {
-      console.error("Redirect error:", error);
-    });
-}, []);
-
-const handleEmailSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  setError("");
-  setSuccess("");
-
-  const cleanEmail = String(email || "").trim().toLowerCase();
-  const cleanPassword = String(password || "");
-  const cleanName = String(name || "").trim();
-
-  if (!cleanEmail || !cleanPassword) {
-    setError("Email and password are required.");
-    setLoading(false);
-    return;
-  }
-
-  if (activeTab === "signup") {
-    if (!cleanName) {
-      setError("Name is required.");
-      setLoading(false);
-      return;
-    }
-    if (cleanPassword.length < 6) {
-      setError("Password should be at least 6 characters.");
-      setLoading(false);
-      return;
-    }
-    if (cleanPassword !== confirmPassword) {
-      setError("Passwords do not match.");
-      setLoading(false);
-      return;
-    }
-  }
-
-  try {
-    let user;
-    if (activeTab === "signup") {
-      const result = await createUserWithEmailAndPassword(auth, cleanEmail, cleanPassword);
-      user = result.user;
-      
-      try {
-        await updateProfile(user, { displayName: cleanName });
-      } catch(e) {}
-      try {
-        await sendEmailVerification(user);
-      } catch (_) {}
-    } else {
-      const result = await signInWithEmailAndPassword(auth, cleanEmail, cleanPassword);
-      user = result.user;
-    }
-
-    setUser({
-      uid: user.uid,
-      name: getPreferredName(user),
-      email: user.email,
-      phone: user.phoneNumber,
-      photoURL: user.photoURL
-    });
-    localStorage.setItem("bloodhub_user", JSON.stringify({
-      uid: user.uid,
-      name: getPreferredName(user),
-      email: user.email,
-      phone: user.phoneNumber,
-      photoURL: user.photoURL
-    }));
-    navigate("/welcome");
-  } catch (err) {
-    setError("Authentication Failed. Invalid combinations.");
-  } finally {
-    setLoading(false);
-  }
-};
-
-function AuthPage({ setUser, initialMode = "login" }) {
+function AuthPage({ setUser, user, initialMode = "login" }) {
   const [activeTab, setActiveTab] = useState("login");
   
   const [name, setName] = useState("");
@@ -155,33 +56,29 @@ function AuthPage({ setUser, initialMode = "login" }) {
   }, [initialMode, location]);
 
   useEffect(() => {
-    getRedirectResult(auth)
-      .then((result) => {
-        if (result?.user) {
-          const user = result.user;
-
-          const userData = {
-            uid: user.uid,
-            name: user.displayName,
-            email: user.email,
-            photoURL: user.photoURL
-          };
-
-          localStorage.setItem("bloodhub_user", JSON.stringify(userData));
-          setUser(userData);
-        }
-      })
-      .catch((error) => {
-        console.error("Redirect error:", error);
-        setError("Google authentication failed");
-      });
-  }, []);
+    // If user prop is updated (logged in), navigate away immediately
+    if (user) {
+      console.log("User detected in AuthPage, navigating to /welcome");
+      navigate("/welcome");
+    }
+  }, [user, navigate]);
 
   const handleGoogleAuth = async () => {
     try {
-      await signInWithRedirect(auth, googleProvider);
+      const result = await signInWithPopup(auth, googleProvider);
+      if (result.user) {
+        const userData = {
+          uid: result.user.uid,
+          name: result.user.displayName,
+          email: result.user.email,
+          photoURL: result.user.photoURL
+        };
+        localStorage.setItem("bloodhub_user", JSON.stringify(userData));
+        setUser(userData);
+        navigate("/welcome");
+      }
     } catch (error) {
-      console.error(error);
+      console.error("Google Auth error:", error);
       setError("Google authentication failed");
     }
   };
@@ -258,6 +155,17 @@ function AuthPage({ setUser, initialMode = "login" }) {
       setLoading(false);
     }
   };
+
+  // Redirect if already logged in
+  useEffect(() => {
+    const cachedUser = localStorage.getItem("bloodhub_user");
+    if (cachedUser) {
+      try {
+        const parsed = JSON.parse(cachedUser);
+        if (parsed?.uid) navigate("/welcome");
+      } catch (e) {}
+    }
+  }, [navigate]);
 
   return (
     <div className="auth-wrapper">

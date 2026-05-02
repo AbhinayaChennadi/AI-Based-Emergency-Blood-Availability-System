@@ -48,8 +48,8 @@ function App() {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => {
       controller.abort();
-      console.warn(`[CONNECTIVITY] Load attempt ${retryCount + 1} timed out after 30s.`);
-    }, 30000); // 30s timeout for cold starts
+      console.warn(`[CONNECTIVITY] Load attempt ${retryCount + 1} timed out after 8s.`);
+    }, 8000); // 8s timeout for cold starts
 
     try {
       const fetchOptions = { 
@@ -89,7 +89,7 @@ function App() {
       if (retryCount < 1) {
         console.log(`[CONNECTIVITY] Retrying connection (Attempt ${retryCount + 2})...`);
         // Slight delay before retry to allow server to stabilize
-        await new Promise(r => setTimeout(r, 1000));
+        await new Promise(r => setTimeout(r, 500));
         return loadData(retryCount + 1);
       }
 
@@ -170,9 +170,9 @@ function App() {
           <Route path="/" element={<Home user={user} />} />
           <Route path="/about" element={<About />} />
           <Route path="/faq" element={<Faq />} />
-          <Route path="/auth" element={<AuthPage setUser={setUser} initialMode="login" />} />
-          <Route path="/login" element={<AuthPage setUser={setUser} initialMode="login" />} />
-          <Route path="/signup" element={<AuthPage setUser={setUser} initialMode="signup" />} />
+          <Route path="/auth" element={<AuthPage setUser={setUser} user={user} initialMode="login" />} />
+          <Route path="/login" element={<AuthPage setUser={setUser} user={user} initialMode="login" />} />
+          <Route path="/signup" element={<AuthPage setUser={setUser} user={user} initialMode="signup" />} />
           <Route
             path="/donate"
             element={

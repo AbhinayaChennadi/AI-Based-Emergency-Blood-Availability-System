@@ -26,6 +26,15 @@ export const predictDonorLikelihood = (r, f, m, t) => {
 
     let output = "";
     let error = "";
+    let completed = false;
+
+    // Timeout mechanism
+    const timeout = setTimeout(() => {
+      if (!completed) {
+        pythonProcess.kill();
+        reject(new Error("AI Model prediction timed out after 5s"));
+      }
+    }, 5000);
 
     pythonProcess.stdout.on("data", (data) => {
       output += data.toString();
@@ -36,9 +45,16 @@ export const predictDonorLikelihood = (r, f, m, t) => {
     });
 
     pythonProcess.on("close", (code) => {
-      if (code !== 0) {
+      completed = true;
+      clearTimeout(timeout);
+      if (code !== 0 && code !== null) {
         console.error(`[AI-MODEL] Python process exited with code ${code}: ${error}`);
         return reject(new Error(error || `Python process failed with code ${code}`));
+      }
+
+      if (code === null) {
+        // Already handled by timeout reject
+        return;
       }
 
       try {
